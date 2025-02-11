@@ -8,6 +8,7 @@ const SPIDER_WIDTH = 40;
 const SPIDER_HEIGHT = 40;
 const DROPLET_WIDTH = 30;
 const FLY_WIDTH = 30;
+const MAX_SPEED = 10;
 const SPIDER_IMG = new Image();
 SPIDER_IMG.src = 'assets/spider.png'; // The spider image
 const WATER_IMG = new Image();
@@ -27,6 +28,7 @@ let lastBonusTime = 0; // To control bonus cooldown
 let bonusCooldown = 500; // 500ms cooldown for bonus
 
 let spawnrate = 0.005;
+let speed = 2;
 
 // Droplets and flies arrays
 let droplets = [];
@@ -79,18 +81,18 @@ function updateGame() {
     flies.push({ x: randomLinePosition(), y: 0 });
   }
   // Update spawnrate
-  spawnrate += 0.000001
+  spawnrate += 0.000005
 
   // Update droplet and fly positions
   for (let i = droplets.length - 1; i >= 0; i--) {
-    droplets[i].y += 3; // Droplets fall at 5px per frame
+    droplets[i].y += speed; // Droplets fall at 5px per frame
     if (droplets[i].y > canvas.height) {
       droplets.splice(i, 1); // Remove droplets that fall off the screen
     }
   }
 
   for (let i = flies.length - 1; i >= 0; i--) {
-    flies[i].y += 3; // Flies fall at 5px per frame
+    flies[i].y += speed; // Flies fall at 5px per frame
     if (flies[i].y > canvas.height) {
       flies.splice(i, 1); // Remove flies that fall off the screen
     }
@@ -125,6 +127,7 @@ function updateGame() {
         lastBonusTime = Date.now();
       } else {
         score += 1; // Normal score for catching the fly
+        speed += 0.5;
       }
       flies.splice(i, 1); // Remove the fly after collection
     }
@@ -167,7 +170,8 @@ function drawGame() {
 function resetGame() {
   score = 0;
   spiderIndex = 2; // Start in the middle of the 5 lines
-  spawnrate = 0.005
+  spawnrate = 0.005;
+  speed = 2;
   droplets = [];
   flies = [];
 }
