@@ -27,7 +27,7 @@ let moveCooldown = 200; // 200ms cooldown for movement
 let lastBonusTime = 0; // To control bonus cooldown
 let bonusCooldown = 500; // 500ms cooldown for bonus
 
-let drop_spawnrate = 0.02;
+let drop_spawnrate = 0.015;
 let speed = 2;
 
 // Droplets and flies arrays
@@ -91,7 +91,7 @@ function updateGame() {
   if (Math.random() < drop_spawnrate) {
     droplets.push({ x: randomLinePosition(), y: 0, type: 'water' });
   }
-  if (Math.random() < 0.005) { // 2% chance per frame
+  if (Math.random() < 0.0075) { // 2% chance per frame
     flies.push({ x: randomLinePosition(), y: 0 });
   }
 
@@ -140,9 +140,19 @@ function updateGame() {
       } else {
         score += 1; // Normal score for catching the fly
       }
-      if (score % 10 == 0 && speed != MAX_SPEED) {
+      if (score == 2) {
         speed += 1;
       }
+      else if (score == 5) {
+        speed += 1;
+      }
+      else if (score == 10) {
+        speed += 1;
+      }
+      else if (score > 10 && score % 10 == 0) {
+        speed += 1;
+      }
+      else {}
       flies.splice(i, 1); // Remove the fly after collection
     }
   }
@@ -184,7 +194,7 @@ function drawGame() {
 function resetGame() {
   score = 0;
   spiderIndex = 2; // Start in the middle of the 5 lines
-  drop_spawnrate = 0.01;
+  drop_spawnrate = 0.015;
   speed = 2;
   droplets = [];
   flies = [];
