@@ -27,7 +27,7 @@ let moveCooldown = 200; // 200ms cooldown for movement
 let lastBonusTime = 0; // To control bonus cooldown
 let bonusCooldown = 500; // 500ms cooldown for bonus
 
-let spawnrate = 0.005;
+let drop_spawnrate = 0.02;
 let speed = 2;
 
 // Droplets and flies arrays
@@ -57,6 +57,20 @@ function randomLinePosition() {
   return LINES_X_POSITIONS[line];
 }
 
+// Function to check if a new droplet is too close to existing droplets on the same line
+function isTooClose(linePosition) {
+  // Minimum distance (in pixels) between droplets on the same line
+  const MIN_DISTANCE = 100;
+
+  // Check if there are any droplets already on the same line that are too close
+  for (let droplet of droplets) {
+    if (Math.abs(droplet.x - linePosition) < MIN_DISTANCE) {
+      return true; // There is another droplet too close to the new one
+    }
+  }
+  return false; // No droplets too close
+}
+
 // Function to update the game state
 function updateGame() {
   const currentTime = Date.now();
@@ -74,14 +88,12 @@ function updateGame() {
     }
   }
   // Spawn droplets and flies periodically
-  if (Math.random() < spawnrate) { // 2% chance per frame
+  if (Math.random() < drop_spawnrate) {
     droplets.push({ x: randomLinePosition(), y: 0, type: 'water' });
   }
-  if (Math.random() < spawnrate) { // 2% chance per frame
+  if (Math.random() < 0.005) { // 2% chance per frame
     flies.push({ x: randomLinePosition(), y: 0 });
   }
-  // Update spawnrate
-  spawnrate += 0.000005
 
   // Update droplet and fly positions
   for (let i = droplets.length - 1; i >= 0; i--) {
@@ -127,7 +139,9 @@ function updateGame() {
         lastBonusTime = Date.now();
       } else {
         score += 1; // Normal score for catching the fly
-        speed += 0.5;
+      }
+      if (score % 10 == 0 && speed != MAX_SPEED) {
+        speed += 1;
       }
       flies.splice(i, 1); // Remove the fly after collection
     }
@@ -170,7 +184,7 @@ function drawGame() {
 function resetGame() {
   score = 0;
   spiderIndex = 2; // Start in the middle of the 5 lines
-  spawnrate = 0.005;
+  drop_spawnrate = 0.01;
   speed = 2;
   droplets = [];
   flies = [];
